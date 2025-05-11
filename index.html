@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Currículum</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; }
+    label { font-weight: bold; margin-bottom: 5px; }
+    input, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    textarea { resize: vertical; }
+    button { margin-top: 30px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007BFF; color: white; border: none; border-radius: 4px; }
+    button:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+  <h1>Generador de Currículum Vitae</h1>
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Nombre completo:</label>
+      <input type="text" id="nombre">
+
+      <label>RUT:</label>
+      <input type="text" id="rut">
+
+      <label>Fecha de nacimiento:</label>
+      <input type="text" id="fechaNacimiento">
+
+      <label>Estado civil:</label>
+      <input type="text" id="estadoCivil">
+
+      <label>Nacionalidad:</label>
+      <input type="text" id="nacionalidad">
+
+      <label>Estudios:</label>
+      <input type="text" id="estudios">
+    </div>
+
+    <div class="form-group">
+      <label>Dirección:</label>
+      <input type="text" id="direccion">
+
+      <label>Móvil:</label>
+      <input type="text" id="movil">
+
+      <label>Segundo contacto:</label>
+      <input type="text" id="segundoContacto">
+
+      <label>Correo:</label>
+      <input type="text" id="correo">
+
+      <label>Experiencia laboral:</label>
+      <textarea id="experiencia" rows="6"></textarea>
+    </div>
+  </div>
+
+  <button onclick="generarPDF()">Generar PDF</button>
+
+  <script>
+    async function generarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const nombre = document.getElementById("nombre").value;
+      const direccion = document.getElementById("direccion").value;
+      const rut = document.getElementById("rut").value;
+      const movil = document.getElementById("movil").value;
+      const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+      const segundoContacto = document.getElementById("segundoContacto").value;
+      const estadoCivil = document.getElementById("estadoCivil").value;
+      const correo = document.getElementById("correo").value;
+      const nacionalidad = document.getElementById("nacionalidad").value;
+      const estudios = document.getElementById("estudios").value;
+      const experiencia = document.getElementById("experiencia").value;
+
+      let y = 10;
+      doc.setFontSize(12);
+
+      doc.text(`Nombre: ${nombre}`, 10, y);
+      doc.text(`Dirección: ${direccion}`, 110, y); y += 10;
+      doc.text(`Rut: ${rut}`, 10, y);
+      doc.text(`Móvil: ${movil}`, 110, y); y += 10;
+      doc.text(`Fecha de Nacimiento: ${fechaNacimiento}`, 10, y);
+      doc.text(`2do Contacto: ${segundoContacto}`, 110, y); y += 10;
+      doc.text(`Estado civil: ${estadoCivil}`, 10, y);
+      doc.text(`Correo: ${correo}`, 110, y); y += 10;
+      doc.text(`Nacionalidad: ${nacionalidad}`, 10, y); y += 15;
+
+      doc.setFontSize(14);
+      doc.text("CURRICULUM VITAE", 10, y); y += 10;
+
+      doc.setFontSize(12);
+      doc.text("ANTECEDENTES ACADEMICOS", 10, y); y += 10;
+      doc.text(estudios, 10, y); y += 15;
+
+      doc.text("ANTECEDENTES LABORALES", 10, y); y += 10;
+      const lines = doc.splitTextToSize(experiencia, 180);
+      doc.text(lines, 10, y);
+
+      doc.save("CurriculumVitae.pdf");
+    }
+  </script>
+</body>
+</html>

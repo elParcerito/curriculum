@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Currículum Vitae</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+    .cv-form, .cv-output { background: white; padding: 20px; margin: auto; width: 70%; border-radius: 10px; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    input, textarea { width: 100%; padding: 5px; margin-top: 5px; }
+    .btn { margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    .cv-preview { margin-top: 40px; }
+  </style>
+</head>
+<body>
+
+  <div class="cv-form">
+    <h1>Formulario Currículum Vitae</h1>
+    <form id="cvForm">
+      <label>Nombre completo:</label>
+      <input type="text" id="nombre">
+
+      <label>RUT:</label>
+      <input type="text" id="rut">
+
+      <label>Fecha de nacimiento:</label>
+      <input type="date" id="nacimiento">
+
+      <label>Estado civil:</label>
+      <input type="text" id="estado">
+
+      <label>Dirección:</label>
+      <input type="text" id="direccion">
+
+      <label>Móvil:</label>
+      <input type="text" id="movil">
+
+      <label>2do Contacto:</label>
+      <input type="text" id="contacto2">
+
+      <label>Correo electrónico:</label>
+      <input type="email" id="correo">
+
+      <label>Nacionalidad:</label>
+      <input type="text" id="nacionalidad">
+
+      <label>Antecedentes Académicos:</label>
+      <textarea id="academicos" rows="4"></textarea>
+
+      <label>Antecedentes Laborales:</label>
+      <textarea id="laborales" rows="4"></textarea>
+
+      <button type="button" class="btn" onclick="generarCV()">Generar y Descargar PDF</button>
+    </form>
+  </div>
+
+  <div class="cv-output" id="cvPreview" style="display:none;"></div>
+
+  <script>
+    async function generarCV() {
+      const datos = {
+        nombre: document.getElementById("nombre").value,
+        rut: document.getElementById("rut").value,
+        nacimiento: document.getElementById("nacimiento").value,
+        estado: document.getElementById("estado").value,
+        direccion: document.getElementById("direccion").value,
+        movil: document.getElementById("movil").value,
+        contacto2: document.getElementById("contacto2").value,
+        correo: document.getElementById("correo").value,
+        nacionalidad: document.getElementById("nacionalidad").value,
+        academicos: document.getElementById("academicos").value,
+        laborales: document.getElementById("laborales").value
+      };
+
+      const preview = document.getElementById("cvPreview");
+      preview.innerHTML = `
+  <h2 style="text-align:center;">CURRICULUM VITAE</h2>
+  <table style="width:100%; border-collapse:collapse;">
+    <tr>
+      <td><strong>Nombre:</strong> ${datos.nombre}</td>
+      <td><strong>Dirección:</strong> ${datos.direccion}</td>
+    </tr>
+    <tr>
+      <td><strong>Rut:</strong> ${datos.rut}</td>
+      <td><strong>Móvil:</strong> ${datos.movil}</td>
+    </tr>
+    <tr>
+      <td><strong>Fecha De Nacimiento:</strong> ${datos.nacimiento}</td>
+      <td><strong>2do Contacto:</strong> ${datos.contacto2}</td>
+    </tr>
+    <tr>
+      <td><strong>Estado civil:</strong> ${datos.estado}</td>
+      <td><strong>Correo:</strong> ${datos.correo}</td>
+    </tr>
+    <tr>
+      <td><strong>Nacionalidad:</strong> ${datos.nacionalidad}</td>
+      <td></td>
+    </tr>
+  </table>
+
+  <h3 style="margin-top:30px;">ANTECEDENTES ACADÉMICOS</h3>
+  <p>${datos.academicos.replace(/\n/g, "<br>")}</p>
+
+  <h3 style="margin-top:30px;">ANTECEDENTES LABORALES</h3>
+  <p>${datos.laborales.replace(/\n/g, "<br>")}</p>
+`;
+
+      preview.style.display = "block";
+
+      const canvas = await html2canvas(preview);
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jspdf.jsPDF();
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save("curriculum_vitae.pdf");
+    }
+  </script>
+
+</body>
+</html>
